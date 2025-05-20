@@ -1,0 +1,54 @@
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+// Initialize the library with the 12C address and LCD size
+LiquidCrystal_I2C lcd(0x27, 16, 2); // Change the address if needed
+
+String lastGesture""; // Variable to store the last displayed gesture
+unsigned long displayTime 0; // Variable to store the time when the gesture was displayed
+const unsigned long displayDuration 3000; // Duration to display the gesture(in milliseconds)
+bool waiting Displayed false; // Flag to check if "Waiting for gesture..." is
+displayed
+
+void setup() {
+Serial.begin(9600);// Start serial communication at 9600 baud
+lcd.init();// Initialize the LCD
+lcd.backlight();// Turn on the backlight
+lcd.clear();// Clear the display
+lcd.setCursor(0, 0);// Set cursor to the first row
+lcd.print("Waiting for"); // Print initial message
+lcd.setCursor(0, 1); //Set cursor to the second row
+lcd.print("gesture...");
+displayTime millis();// Initialize display time
+waitingDisplayed true;// Set flag to true
+}
+
+void loop() {
+if (Serial.available() > 0) {
+String gesture Serial.readStringUntil('\n'); // Read the incoming string
+
+// Check if the new gesture is different from the last displayed gesture
+if (gesture ! lastGesture) (
+lastGesture gesture; // Update the last displayed gesture
+displaytime millis();// Update the display time
+waitingDisplayed false;// Set flag to false
+
+lcd.clear(); // Clear the display
+lcd.setCursor(0, 0); // Set cursor to the first row
+1cd.print("Gesture:"); // Print label
+lcd.setCursor(0, 1); // Set cursor to the second row
+lcd.print(gesture); // Print the gesture
+}
+}
+// Check if the display duration has passed displayTime displayDuration) (
+if (millis() if (IwaitingDisplayed) {
+lcd.clear(); // Clear the display
+lcd.setCursor(0, 0); // Set cursor to the first row
+lcd.print("Waiting for"); // Print waiting message
+lcd.setCursor(0, 1); // Set cursor to the second row
+lcd.print("gesture...");
+displayTime millis(); // Update the display time
+waitingDisplayed true; // Set flag to true
+}
+}
+}
